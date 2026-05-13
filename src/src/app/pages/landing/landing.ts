@@ -15,7 +15,7 @@ export class Landing implements OnInit {
   constructor(public api: ApiService, public router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.api.get<any[]>('/api/courses').subscribe({
+    this.api.get<any[]>('/api/courses/api/courses').subscribe({
       next: (data) => {
         this.featuredCourses = data.slice(0, 4).map(c => ({
           ...c,

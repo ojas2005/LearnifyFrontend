@@ -44,7 +44,9 @@ export class Login {
         });
 
         // Fetch profile using the token explicitly
-        this.api.get<any>('/api/identity/api/accounts/me', false).subscribe({
+        // Fetch profile using the token explicitly via raw http to ensure headers are sent
+        const url = '/backend/api/identity/api/accounts/me';
+        this.api.http.get<any>(url, { headers }).subscribe({
           next: (profile) => {
             this.auth.login({ ...profile, accessToken: token });
             this.toast.add(`Welcome back, ${profile.displayName}!`, 'success');
