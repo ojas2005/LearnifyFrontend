@@ -1,0 +1,64 @@
+<div class="section">
+  <div style="margin-bottom: 40px; animation: slide-up 0.5s ease both;">
+    <h1 class="section-title">Explore Catalog 📚</h1>
+    <p class="section-sub">Find your next obsession from our vast library of knowledge</p>
+    
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px;">
+      <div style="flex: 1; min-width: 300px; position: relative;">
+        <input 
+          class="clay-input" 
+          placeholder="Search for courses, skills, or authors..." 
+          style="padding-left: 44px; height: 54px;"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+        />
+        <span style="position: absolute; left: 16px; top: 16px; font-size: 20px;">🔍</span>
+      </div>
+      <div class="role-pills" style="min-width: 240px;">
+        <div class="role-pill" [class.active]="activeDifficulty === null" (click)="setDifficulty(null)">All levels</div>
+        <div class="role-pill" [class.active]="activeDifficulty === 0" (click)="setDifficulty(0)">Beg.</div>
+        <div class="role-pill" [class.active]="activeDifficulty === 1" (click)="setDifficulty(1)">Int.</div>
+        <div class="role-pill" [class.active]="activeDifficulty === 2" (click)="setDifficulty(2)">Adv.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="topics-grid" style="margin-bottom: 32px;">
+    <div 
+      *ngFor="let t of topics" 
+      class="topic-pill" 
+      [class.active]="activeTopic === t.name"
+      [style.background]="activeTopic === t.name ? t.color : 'rgba(255,255,255,0.7)'"
+      [style.color]="activeTopic === t.name ? 'white' : t.color"
+      [style.borderColor]="t.color"
+      (click)="setTopic(t.name)"
+    >
+      {{t.icon}} {{t.name}}
+    </div>
+  </div>
+
+  <div class="courses-grid">
+    <ng-container *ngIf="loading; else courseList">
+      <div *ngFor="let i of [1,2,3,4,5,6]" class="clay-card skeleton" style="height: 320px;"></div>
+    </ng-container>
+    <ng-template #courseList>
+      <div *ngFor="let c of filteredCourses" class="clay-card course-card" (click)="viewCourse(c.id)">
+        <div class="course-cover" [style.background]="c.color + '22'" [style.color]="c.color">{{c.emoji}}</div>
+        <div class="course-body">
+          <h3 class="course-title">{{c.title}}</h3>
+          <p class="course-instructor">By {{c.authorName || 'Expert Instructor'}}</p>
+          <div class="course-meta">
+            <span class="stars">⭐ 4.8</span>
+            <span class="course-price">{{c.listPrice === 0 ? 'FREE' : '$' + c.listPrice}}</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="filteredCourses.length === 0" class="empty-state" style="grid-column: 1 / -1;">
+        <div class="emoji">🔍</div>
+        <h3 class="section-title">No courses found</h3>
+        <p class="section-sub">Try adjusting your filters or search term</p>
+        <button class="clay-btn sm outline" style="margin-top: 20px;" (click)="searchTerm=''; activeTopic='All'; activeDifficulty=null; applyFilters()">Reset All Filters</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

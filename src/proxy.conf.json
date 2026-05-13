@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://learnify-gateway-ojas2005-dev.apps.rm2.thpm.p1.openshiftapps.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

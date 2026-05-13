@@ -1,0 +1,59 @@
+<div class="section" *ngIf="course">
+  <div style="display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start;">
+    <div>
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <span class="clay-badge" style="background: #DCFCE7; color: #14532d; border-color: #86EFAC;">{{course.topic}}</span>
+        <span class="clay-badge" style="background: #FEF3C7; color: #92400E; border-color: #F59E0B;">{{['Beg.', 'Int.', 'Adv.'][course.difficulty]}}</span>
+      </div>
+      <h1 class="hero h1" style="text-align: left; padding: 0; margin-bottom: 16px;">{{course.title}}</h1>
+      <p class="section-sub" style="font-size: 18px; margin-bottom: 32px;">{{course.synopsis}}</p>
+      
+      <div class="role-pills" style="margin-bottom: 24px; justify-content: flex-start; gap: 12px;">
+        <div class="role-pill" [class.active]="activeTab === 'curriculum'" (click)="activeTab = 'curriculum'">📚 Curriculum</div>
+        <div class="role-pill" [class.active]="activeTab === 'reviews'" (click)="activeTab = 'reviews'">⭐ Reviews ({{reviews.length}})</div>
+      </div>
+
+      <!-- Curriculum Tab -->
+      <div *ngIf="activeTab === 'curriculum'" class="clay-card" style="padding: 24px; margin-bottom: 32px; animation: slide-up 0.4s ease both;">
+        <h2 class="section-title" style="font-size: 20px; margin-bottom: 16px;">Lessons & Content</h2>
+        <div *ngFor="let l of lessons" class="lesson-row" [class.active]="activeLesson?.id === l.id" (click)="activeLesson = l">
+          <div class="lesson-check">✓</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 800;">{{l.title}}</div>
+            <div style="font-size: 11px; opacity: 0.7;">{{l.format === 'video' ? '📺 Video Lesson' : '📝 Reading Material'}}</div>
+          </div>
+        </div>
+        <div *ngIf="lessons.length === 0" class="empty-state">No lessons uploaded yet.</div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div *ngIf="activeTab === 'reviews'" class="clay-card" style="padding: 24px; margin-bottom: 32px; animation: slide-up 0.4s ease both;">
+        <h2 class="section-title" style="font-size: 20px; margin-bottom: 16px;">Student Feedback</h2>
+        <div *ngFor="let r of reviews" style="padding: 16px; border-bottom: 2px solid #DCFCE7; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-weight: 800;">{{r.learnerName || 'Anonymous'}}</div>
+            <div style="color: #F59E0B; font-weight: 900;">⭐ {{r.starRating}}</div>
+          </div>
+          <p style="font-size: 14px; color: #166534; line-height: 1.5;">{{r.comment}}</p>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 8px;">{{r.createdOn | date:'mediumDate'}}</div>
+        </div>
+        <div *ngIf="reviews.length === 0" class="empty-state">No reviews yet. Be the first to review!</div>
+      </div>
+    </div>
+
+    <div class="clay-card" style="padding: 24px; position: sticky; top: 100px;">
+      <div class="course-cover" style="background: #DCFCE7; height: 180px; margin-bottom: 20px;">📖</div>
+      <div style="font-size: 32px; font-weight: 900; color: var(--lime-dark); margin-bottom: 8px;">
+        {{course.listPrice === 0 ? 'FREE' : '$' + course.listPrice}}
+      </div>
+      <p class="section-sub" style="margin-bottom: 24px;">Lifetime access to all materials and future updates.</p>
+      
+      <button *ngIf="!enrolled" class="clay-btn" style="width: 100%; margin-bottom: 12px;" (click)="enroll()">Enroll Now 🚀</button>
+      <button *ngIf="enrolled" class="clay-btn outline" style="width: 100%; margin-bottom: 12px;" (click)="router.navigate(['/dashboard'])">Go to Learning →</button>
+      
+      <div style="font-size: 13px; font-weight: 700; color: #6B7280; text-align: center;">
+        30-Day Money-Back Guarantee
+      </div>
+    </div>
+  </div>
+</div>

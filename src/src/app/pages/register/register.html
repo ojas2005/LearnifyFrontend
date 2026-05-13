@@ -1,0 +1,37 @@
+<div class="auth-wrap">
+  <div class="clay-card auth-card" style="animation: pop-in 0.4s ease both;">
+    <h1 class="auth-title">Join Learnify ✨</h1>
+    <p class="auth-sub">Start your journey into the world of endless knowledge</p>
+    
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input class="clay-input" placeholder="Jane Doe" [(ngModel)]="form.name" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="clay-input" type="email" placeholder="jane@example.com" [(ngModel)]="form.email" />
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="clay-input" type="password" placeholder="••••••••" [(ngModel)]="form.password" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">I want to...</label>
+      <div class="role-pills">
+        <div class="role-pill" [class.active]="form.role === 'Learner'" (click)="setRole('Learner')">Learn 🎓</div>
+        <div class="role-pill" [class.active]="form.role === 'Instructor'" (click)="setRole('Instructor')">Teach 👨‍🏫</div>
+      </div>
+    </div>
+    
+    <button class="clay-btn" style="width: 100%; margin-top: 12px; height: 54px;" (click)="submit()" [disabled]="loading">
+      {{loading ? 'Creating Account...' : 'Get Started 🚀'}}
+    </button>
+    
+    <div style="text-align: center; margin-top: 24px; font-weight: 600; color: #6B7280; font-size: 14px;">
+      Already have an account? <span style="color: var(--lime-dark); cursor: pointer;" (click)="goToLogin()">Sign in</span>
+    </div>
+  </div>
+</div>

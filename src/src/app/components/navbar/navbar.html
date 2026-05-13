@@ -1,0 +1,23 @@
+<nav class="nav-bar">
+  <div class="logo" (click)="navigate('/')">Learn<span>ify</span></div>
+
+  <div class="nav-links">
+    <button class="nav-link" (click)="navigate('/')">Home</button>
+    <button class="nav-link" (click)="navigate('/catalog')">Catalog</button>
+    <ng-container *ngIf="user; else guestLinks">
+      <div class="user-pill" (click)="navigate(dashRoute)">
+        <span class="user-name">Hey, {{user.displayName}} 👋</span>
+      </div>
+      <button class="nav-link" (click)="navigate(dashRoute)">Dashboard</button>
+      <button class="nav-link" (click)="navigate('/profile')">Profile</button>
+      <button class="clay-btn sm outline" (click)="logout()">Sign Out</button>
+    </ng-container>
+    <ng-template #guestLinks>
+      <button class="nav-link" (click)="navigate('/login')">Sign In</button>
+      <button class="clay-btn sm" (click)="navigate('/register')">Get Started 🚀</button>
+    </ng-template>
+    <button class="theme-btn" (click)="toggleTheme()" [title]="isDark ? 'Light mode' : 'Dark mode'">
+      {{ isDark ? '☀️' : '🌙' }}
+    </button>
+  </div>
+</nav>

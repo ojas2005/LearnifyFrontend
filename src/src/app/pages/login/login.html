@@ -1,0 +1,32 @@
+<div class="auth-wrap">
+  <div class="clay-card auth-card" style="animation: pop-in 0.4s ease both;">
+    <h1 class="auth-title">Welcome Back 👋</h1>
+    <p class="auth-sub">Sign in to continue your learning journey</p>
+    
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="clay-input" type="email" placeholder="name@company.com" [(ngModel)]="form.email" (keyup.enter)="submit()" />
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="clay-input" type="password" placeholder="••••••••" [(ngModel)]="form.password" (keyup.enter)="submit()" />
+    </div>
+    
+    <button class="clay-btn" style="width: 100%; margin-top: 12px; height: 54px; justify-content: center;" (click)="submit()" [disabled]="loading">
+      {{loading ? 'Signing in...' : 'Sign In 🚀'}}
+    </button>
+    
+    <a [href]="gatewayUrl + '/api/identity/api/accounts/external-login'" class="clay-btn outline" style="width: 100%; margin-top: 12px; height: 54px; justify-content: center; text-decoration: none;">
+      🔵 Continue with Google
+    </a>
+    
+    <div style="text-align: center; margin-top: 24px; font-weight: 600; color: #6B7280; font-size: 14px;">
+      Don't have an account? <span style="color: var(--lime-dark); cursor: pointer;" (click)="goToRegister()">Sign up free</span>
+    </div>
+
+    <div style="margin-top: 20px; padding: 12px 16px; background: #ECFCCB; border-radius: 12px; font-size: 12px; font-weight: 700; color: #365314; line-height: 1.5">
+      💡 Tip: Use your registered credentials to access specialized dashboards.
+    </div>
+  </div>
+</div>

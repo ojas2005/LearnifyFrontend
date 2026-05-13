@@ -1,0 +1,141 @@
+<div class="admin-wrap">
+  <div style="margin-bottom: 32px; animation: slide-up 0.5s ease both;">
+    <h1 class="section-title">Platform Administration 🛠️</h1>
+    <p class="section-sub">Monitor users, approve courses, and manage platform settings</p>
+  </div>
+
+  <div class="dash-grid" style="margin-bottom: 32px;">
+    <div class="clay-card stat-card" (click)="activeTab = 'users'">
+      <div class="icon">👥</div>
+      <div class="val">{{accounts.length}}</div>
+      <div class="label">Total Users</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.1s;" (click)="activeTab = 'courses'">
+      <div class="icon">📚</div>
+      <div class="val">{{courses.length}}</div>
+      <div class="label">Total Courses</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.2s;" (click)="activeTab = 'pending'">
+      <div class="icon">⏳</div>
+      <div class="val">{{(courses | filterPending).length}}</div>
+      <div class="label">Pending Approvals</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.3s;" (click)="activeTab = 'analytics'">
+      <div class="icon">📊</div>
+      <div class="val">{{stats?.totalRevenue || 0 | currency}}</div>
+      <div class="label">Revenue</div>
+    </div>
+  </div>
+
+  <div class="role-pills" style="margin-bottom: 24px; justify-content: flex-start; gap: 12px;">
+    <div class="role-pill" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">⏳ Pending</div>
+    <div class="role-pill" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">👥 Users</div>
+    <div class="role-pill" [class.active]="activeTab === 'courses'" (click)="activeTab = 'courses'">📚 All Courses</div>
+    <div class="role-pill" [class.active]="activeTab === 'analytics'" (click)="activeTab = 'analytics'">📊 Analytics</div>
+  </div>
+
+  <!-- Pending Tab -->
+  <div *ngIf="activeTab === 'pending'" class="clay-card" style="padding: 0; overflow: hidden; animation: slide-up 0.4s ease both;">
+    <div class="table-wrap">
+      <table class="clay-table">
+        <thead>
+          <tr><th>Course</th><th>Author</th><th>Submitted On</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of courses | filterPending">
+            <td><div style="font-weight: 800;">{{c.title}}</div><div style="font-size: 11px; color: #9CA3AF;">{{c.topic}}</div></td>
+            <td>{{c.authorName}}</td>
+            <td style="font-size: 12px; opacity: 0.7;">{{c.lastModifiedOn | date:'shortDate'}}</td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <button class="clay-btn sm" (click)="approveCourse(c)" style="background: #10B981; border-color: #059669; box-shadow: 3px 3px 0 #059669;">Approve ✓</button>
+                <button class="clay-btn sm danger" (click)="rejectCourse(c)">Reject ✕</button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="(courses | filterPending).length === 0">
+            <td colspan="4"><div class="empty-state">No courses awaiting approval.</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Users Tab -->
+  <div *ngIf="activeTab === 'users'" class="clay-card" style="padding: 0; overflow: hidden; animation: slide-up 0.4s ease both;">
+    <div class="table-wrap">
+      <table class="clay-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let acc of accounts">
+            <td><div style="font-weight: 800;">{{acc.displayName}}</div></td>
+            <td style="font-size: 13px;">{{acc.emailAddress}}</td>
+            <td>
+              <span class="status-badge" [style.background]="acc.role === 'Admin' ? '#FEE2E2' : acc.role === 'Instructor' ? '#DBEAFE' : '#DCFCE7'"
+                    [style.color]="acc.role === 'Admin' ? '#991B1B' : acc.role === 'Instructor' ? '#1E40AF' : '#14532d'"
+                    [style.borderColor]="acc.role === 'Admin' ? '#FCA5A5' : acc.role === 'Instructor' ? '#60A5FA' : '#86EFAC'">
+                {{acc.role}}
+              </span>
+            </td>
+            <td>
+              <select class="select-clay" style="padding: 4px 8px; font-size: 12px; height: 32px;" (change)="updateRole(acc, $any($event.target).value)">
+                <option [selected]="acc.role === 'Learner'" value="0">Learner</option>
+                <option [selected]="acc.role === 'Instructor'" value="1">Instructor</option>
+                <option [selected]="acc.role === 'Admin'" value="2">Admin</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- All Courses Tab -->
+  <div *ngIf="activeTab === 'courses'" class="clay-card" style="padding: 0; overflow: hidden; animation: slide-up 0.4s ease both;">
+    <div class="table-wrap">
+      <table class="clay-table">
+        <thead>
+          <tr><th>Title</th><th>Topic</th><th>Instructor</th><th>Status</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of courses">
+            <td style="font-weight: 800;">{{c.title}}</td>
+            <td>{{c.topic}}</td>
+            <td style="font-size: 13px;">{{c.authorName}}</td>
+            <td>
+              <span class="status-badge" [style.background]="c.isApproved ? '#DCFCE7' : '#FEF3C7'" [style.color]="c.isApproved ? '#14532d' : '#92400E'">
+                {{c.isApproved ? 'Live' : 'Hidden'}}
+              </span>
+            </td>
+            <td style="font-weight: 800;">{{c.listPrice | currency}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Analytics Tab -->
+  <div *ngIf="activeTab === 'analytics'" style="animation: slide-up 0.4s ease both;">
+    <div class="dash-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 32px;">
+      <div class="clay-card stat-card" style="background: #FDFCFB;">
+        <div class="label">Total Revenue</div>
+        <div class="val" style="color: #10B981;">{{stats?.totalRevenue | currency}}</div>
+      </div>
+      <div class="clay-card stat-card">
+        <div class="label">Total Enrollments</div>
+        <div class="val">{{stats?.totalEnrollments || 0}}</div>
+      </div>
+      <div class="clay-card stat-card">
+        <div class="label">Course Completion Rate</div>
+        <div class="val">{{stats?.averageCompletionRate || 0}}%</div>
+      </div>
+    </div>
+    
+    <h3 class="section-title" style="font-size: 18px; margin-bottom: 16px;">Platform Activity 📈</h3>
+    <div class="clay-card" style="padding: 24px; min-height: 200px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.6);">
+      <p class="section-sub">Detailed activity graphs will appear here once more data is collected.</p>
+    </div>
+  </div>
+</div>

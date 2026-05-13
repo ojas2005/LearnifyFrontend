@@ -1,0 +1,26 @@
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--lilac);
+  border: 2px solid var(--purple-light);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  margin-right: 8px;
+}
+
+.user-pill:hover {
+  transform: translateY(-2px);
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--purple-dark);
+}
+
+[data-theme="dark"] .user-name {
+  color: #fff;
+}

@@ -1,0 +1,5 @@
+<div class="toast-container">
+  <div *ngFor="let t of toasts" class="toast {{t.type}}" (click)="dismiss(t.id)">
+    {{t.message}}
+  </div>
+</div>

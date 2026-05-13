@@ -1,0 +1,58 @@
+<div class="admin-wrap">
+  <div style="margin-bottom: 32px; animation: slide-up 0.5s ease both;">
+    <h1 class="section-title">Welcome back, {{user?.displayName}}! 🎓</h1>
+    <p class="section-sub">You've made great progress this week. Keep it up!</p>
+  </div>
+
+  <div class="dash-grid" style="margin-bottom: 40px;">
+    <div class="clay-card stat-card">
+      <div class="icon">📚</div>
+      <div class="val">{{registrations.length}}</div>
+      <div class="label">Courses Enrolled</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.1s;">
+      <div class="icon">🏆</div>
+      <div class="val">0</div>
+      <div class="label">Certificates Earned</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.2s;">
+      <div class="icon">⚡</div>
+      <div class="val">450</div>
+      <div class="label">Knowledge Points</div>
+    </div>
+  </div>
+
+  <h2 class="section-title" style="font-size: 22px; margin-bottom: 20px;">My Ongoing Courses 🚀</h2>
+  
+  <div class="courses-grid" style="margin-bottom: 48px;">
+    <ng-container *ngIf="loading; else regList">
+      <div *ngFor="let i of [1,2,3]" class="clay-card skeleton" style="height: 300px;"></div>
+    </ng-container>
+    <ng-template #regList>
+      <div *ngFor="let r of registrations" class="clay-card course-card" (click)="viewCourse(r.courseId)">
+        <div class="course-cover" [style.background]="r.color + '22'" [style.color]="r.color">📖</div>
+        <div class="course-body">
+          <h3 class="course-title">{{r.courseTitle || 'Course Title'}}</h3>
+          <p class="course-instructor">Instructor: {{r.instructorName || 'Expert'}}</p>
+          <div style="margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; color: #14532d; margin-bottom: 6px;">
+              <span>Progress</span>
+              <span>{{r.completionPercent || 0}}%</span>
+            </div>
+            <div style="height: 10px; background: #DCFCE7; border-radius: 99px; overflow: hidden; border: 1.5px solid #BBF7D0;">
+              <div [style.width]="(r.completionPercent || 0) + '%'" style="height: 100%; background: var(--lime); transition: width 0.5s ease;"></div>
+            </div>
+          </div>
+          <button class="clay-btn sm" style="width: 100%; margin-top: 20px;">Continue Learning →</button>
+        </div>
+      </div>
+      
+      <div *ngIf="registrations.length === 0" class="empty-state" style="grid-column: 1 / -1;">
+        <div class="emoji">📚</div>
+        <h3 class="section-title">No enrollments yet</h3>
+        <p class="section-sub">Start learning something new today!</p>
+        <button class="clay-btn sm" style="margin-top: 20px;" (click)="router.navigate(['/catalog'])">Browse Catalog</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

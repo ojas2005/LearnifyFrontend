@@ -1,0 +1,69 @@
+<div class="hero">
+  <div class="blob" style="width: 400px; height: 400px; background: #BEF264; top: -80px; left: -80px; animation-delay: 0s;"></div>
+  <div class="blob" style="width: 300px; height: 300px; background: #A7F3D0; bottom: -40px; right: -40px; animation-delay: -2s;"></div>
+  
+  <h1 style="position: relative;">The Future of <span>Learning</span> is Here. 🚀</h1>
+  <p style="position: relative;">Master new skills with our premium course catalog, expert-led sessions, and a community of millions.</p>
+  
+  <div class="hero-btns" style="position: relative;">
+    <button class="clay-btn" (click)="router.navigate(['/catalog'])">Explore Catalog 📚</button>
+    <button class="clay-btn outline" (click)="router.navigate(['/register'])">Start Free Trial ⚡</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="clay-card stat-clay"><div class="num">500+</div><div class="lbl">Elite Courses</div></div>
+  <div class="clay-card stat-clay" style="animation-delay: 0.1s;"><div class="num">12k+</div><div class="lbl">Active Learners</div></div>
+  <div class="clay-card stat-clay" style="animation-delay: 0.2s;"><div class="num">4.9/5</div><div class="lbl">Learner Rating</div></div>
+  <div class="clay-card stat-clay" style="animation-delay: 0.3s;"><div class="num">99%</div><div class="lbl">Success Rate</div></div>
+</div>
+
+<div class="section">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; flex-wrap: wrap; gap: 20px;">
+    <div>
+      <h2 class="section-title">Featured Courses 🔥</h2>
+      <p class="section-sub">Hand-picked by our editors for quality and impact</p>
+    </div>
+    <button class="clay-btn sm outline" (click)="router.navigate(['/catalog'])">View All Courses →</button>
+  </div>
+
+  <div class="courses-grid">
+    <ng-container *ngIf="loading; else courseList">
+      <div *ngFor="let i of [1,2,3,4]" class="clay-card skeleton" style="height: 320px;"></div>
+    </ng-container>
+    <ng-template #courseList>
+      <div *ngFor="let c of featuredCourses" class="clay-card course-card" (click)="viewCourse(c.id)">
+        <div class="course-cover" [style.background]="c.color + '22'" [style.color]="c.color">{{c.emoji}}</div>
+        <div class="course-body">
+          <h3 class="course-title">{{c.title}}</h3>
+          <p class="course-instructor">By {{c.authorName || 'Expert Instructor'}}</p>
+          <div class="course-meta">
+            <span class="stars">⭐ 4.8</span>
+            <span class="course-price">{{c.listPrice === 0 ? 'FREE' : '$' + c.listPrice}}</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="section" style="background: rgba(255,255,255,0.4); border-radius: 40px; margin-top: 60px; margin-bottom: 80px;">
+  <h2 class="section-title" style="text-align: center; margin-bottom: 40px;">How it works 🛠️</h2>
+  <div class="steps-row">
+    <div class="step-box">
+      <div class="step-num">1</div>
+      <h3 class="step-title">Choose Path</h3>
+      <p class="step-desc">Pick from hundreds of hand-picked courses from top industry experts.</p>
+    </div>
+    <div class="step-box">
+      <div class="step-num">2</div>
+      <h3 class="step-title">Learn Deeply</h3>
+      <p class="step-desc">Engage with video lessons, quizzes, and hands-on projects.</p>
+    </div>
+    <div class="step-box">
+      <div class="step-num">3</div>
+      <h3 class="step-title">Get Certified</h3>
+      <p class="step-desc">Complete your course and earn a certificate to boost your career.</p>
+    </div>
+  </div>
+</div>

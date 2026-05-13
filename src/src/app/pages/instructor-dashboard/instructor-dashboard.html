@@ -1,0 +1,181 @@
+<div class="admin-wrap">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <h1 class="section-title">Instructor Studio 👨‍🏫</h1>
+      <p class="section-sub">Manage your courses, assessments and students</p>
+    </div>
+    <button class="clay-btn" (click)="showCreateModal = true">+ Create Course</button>
+  </div>
+
+  <div class="dash-grid" style="margin-bottom: 32px;">
+    <div class="clay-card stat-card">
+      <div class="icon">📚</div>
+      <div class="val">{{myCourses.length}}</div>
+      <div class="label">My Courses</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.1s;">
+      <div class="icon">👥</div>
+      <div class="val">{{getTotalStudents()}}</div>
+      <div class="label">Total Students</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.2s;">
+      <div class="icon">⭐</div>
+      <div class="val">4.7</div>
+      <div class="label">Avg Rating</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.3s;">
+      <div class="icon">💰</div>
+      <div class="val">{{getTotalRevenue() | currency}}</div>
+      <div class="label">Revenue</div>
+    </div>
+  </div>
+
+  <h2 class="section-title" style="font-size: 20px; margin-bottom: 16px;">My Courses</h2>
+  <div class="clay-card" style="padding: 0; overflow: hidden;">
+    <div class="table-wrap">
+      <table class="clay-table">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Status</th>
+            <th>Students</th>
+            <th>Rating</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of myCourses">
+            <td>
+              <div style="font-weight: 800;">{{c.title}}</div>
+              <div style="font-size: 12px; color: #9CA3AF;">{{c.topic}}</div>
+            </td>
+            <td>
+              <span class="status-badge" [style.background]="c.isApproved ? '#D1FAE5' : c.isPublished ? '#DBEAFE' : '#FEF3C7'" 
+                    [style.color]="c.isApproved ? '#065F46' : c.isPublished ? '#1E40AF' : '#92400E'" 
+                    [style.borderColor]="c.isApproved ? '#34D399' : c.isPublished ? '#60A5FA' : '#F59E0B'">
+                {{c.isApproved ? 'Live' : c.isPublished ? 'In Review' : 'Draft'}}
+              </span>
+            </td>
+            <td>
+              <div style="font-weight: 800;">{{c.totalRegistrations || 0}}</div>
+              <button class="clay-btn sm outline" style="padding: 4px 10px; font-size: 11px; margin-top: 4px;" (click)="viewRoster(c)">👥 View List</button>
+            </td>
+            <td>⭐ {{c.averageRating | number:'1.1-1'}}</td>
+            <td>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button *ngIf="!c.isPublished && !c.isApproved" class="clay-btn sm" style="background: #10B981; border-color: #059669; box-shadow: 3px 3px 0 #059669; color: white;" (click)="submit(c)">📤 Submit</button>
+                <button class="clay-btn sm outline" (click)="openEdit(c)">✏️ Edit</button>
+                <button class="clay-btn sm danger" (click)="delete(c)">🗑️ Delete</button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="myCourses.length === 0">
+            <td colspan="5"><div class="empty-state">No courses yet. Create your first!</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Create Modal -->
+  <div class="modal-overlay" *ngIf="showCreateModal" (click)="showCreateModal = false">
+    <div class="clay-card modal-card" (click)="$event.stopPropagation()">
+      <h2 class="auth-title">Create New Course ✨</h2>
+      <div class="form-group"><label class="form-label">Title</label><input class="clay-input" [(ngModel)]="form.title" /></div>
+      <div class="form-group"><label class="form-label">Synopsis</label><textarea class="textarea-clay" [(ngModel)]="form.synopsis"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Topic</label>
+        <select class="select-clay" [(ngModel)]="form.topic">
+          <option *ngFor="let t of topics" [value]="t">{{t}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Difficulty</label>
+        <div class="role-pills">
+          <div class="role-pill" [class.active]="form.difficulty === 0" (click)="form.difficulty = 0">Beg.</div>
+          <div class="role-pill" [class.active]="form.difficulty === 1" (click)="form.difficulty = 1">Int.</div>
+          <div class="role-pill" [class.active]="form.difficulty === 2" (click)="form.difficulty = 2">Adv.</div>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Price ($)</label><input class="clay-input" type="number" [(ngModel)]="form.price" /></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px;">
+        <button class="clay-btn outline" (click)="showCreateModal = false">Cancel</button>
+        <button class="clay-btn" (click)="create()">Create Course 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" *ngIf="showEditModal" (click)="showEditModal = false">
+    <div class="clay-card modal-card" (click)="$event.stopPropagation()">
+      <h2 class="auth-title">Edit Course ✏️</h2>
+      <div class="form-group"><label class="form-label">Title</label><input class="clay-input" [(ngModel)]="editForm.title" /></div>
+      <div class="form-group"><label class="form-label">Synopsis</label><textarea class="textarea-clay" [(ngModel)]="editForm.synopsis"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Topic</label>
+        <select class="select-clay" [(ngModel)]="editForm.topic">
+          <option *ngFor="let t of topics" [value]="t">{{t}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Difficulty</label>
+        <div class="role-pills">
+          <div class="role-pill" [class.active]="editForm.difficulty === 0" (click)="editForm.difficulty = 0">Beg.</div>
+          <div class="role-pill" [class.active]="editForm.difficulty === 1" (click)="editForm.difficulty = 1">Int.</div>
+          <div class="role-pill" [class.active]="editForm.difficulty === 2" (click)="editForm.difficulty = 2">Adv.</div>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Price ($)</label><input class="clay-input" type="number" [(ngModel)]="editForm.price" /></div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px;">
+        <button class="clay-btn outline" (click)="showEditModal = false">Cancel</button>
+        <button class="clay-btn" (click)="saveEdit()">Save Changes ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roster Modal -->
+  <div class="modal-overlay" *ngIf="showRosterModal" (click)="showRosterModal = false">
+    <div class="clay-card modal-card" style="max-width: 600px;" (click)="$event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+        <div>
+          <h2 class="auth-title" style="margin-bottom: 4px;">Student Roster 👥</h2>
+          <p class="section-sub">{{selectedCourseForRoster?.title}}</p>
+        </div>
+        <button class="clay-btn sm outline" (click)="showRosterModal = false">✕</button>
+      </div>
+
+      <div *ngIf="rosterLoading" class="empty-state">Loading students...</div>
+      
+      <div *ngIf="!rosterLoading && selectedRoster.length === 0" class="empty-state">
+        <div class="emoji">🎐</div>
+        <p>No students enrolled yet</p>
+      </div>
+
+      <div *ngIf="!rosterLoading && selectedRoster.length > 0" style="max-height: 400px; overflow-y: auto;">
+        <table class="clay-table">
+          <thead>
+            <tr>
+              <th>Student Name</th>
+              <th>Progress</th>
+              <th>Enrolled On</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of selectedRoster">
+              <td>
+                <div style="font-weight: 800;">{{s.learnerName}}</div>
+              </td>
+              <td>
+                <div style="font-size: 11px; font-weight: 800; color: #166534; margin-bottom: 4px;">{{s.completionPercent}}%</div>
+                <div style="height: 6px; background: #DCFCE7; border-radius: 99px; overflow: hidden;">
+                  <div [style.width]="s.completionPercent + '%'" style="height: 100%; background: #10B981;"></div>
+                </div>
+              </td>
+              <td style="font-size: 12px; opacity: 0.8;">{{s.registeredOn | date:'shortDate'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
