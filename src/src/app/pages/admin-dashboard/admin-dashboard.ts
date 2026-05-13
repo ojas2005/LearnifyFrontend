@@ -69,7 +69,7 @@ export class AdminDashboard implements OnInit {
       }
     });
 
-    this.api.get<any>('/api/analytics/api/analytics/platform-stats', true).subscribe({
+    this.api.get<any>('/api/analytics/api/admin/analytics/dashboard', true).subscribe({
       next: (data) => {
         this.stats = data;
         this.cdr.detectChanges();
@@ -143,12 +143,16 @@ export class AdminDashboard implements OnInit {
   inspectCourse(c: any): void {
     this.selectedCourse = c;
     this.activeTab = 'inspect-course';
-    this.api.get<any[]>(`/api/analytics/api/analytics/course/${c.id}/enrollments`).subscribe({
+    this.api.get<any[]>(`/api/registration/api/registrations/course/${c.id}/roster`, true).subscribe({
       next: (data) => {
         this.enrollments = data;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Failed to fetch enrollments', err)
+      error: (err) => {
+        console.error('Failed to fetch enrollments', err);
+        this.enrollments = [];
+        this.cdr.detectChanges();
+      }
     });
   }
 }

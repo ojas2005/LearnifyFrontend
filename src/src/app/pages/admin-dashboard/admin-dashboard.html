@@ -191,9 +191,9 @@
           </thead>
           <tbody>
             <tr *ngFor="let e of enrollments">
-              <td style="font-weight: 800;">{{e.studentName}}</td>
-              <td>{{e.studentEmail}}</td>
-              <td>{{e.enrolledOn | date:'mediumDate'}}</td>
+              <td style="font-weight: 800;">{{e.learnerName}}</td>
+              <td>ID: {{e.learnerId}}</td>
+              <td>{{e.registeredOn | date:'mediumDate'}}</td>
             </tr>
             <tr *ngIf="enrollments.length === 0">
               <td colspan="3"><div class="empty-state">No students enrolled in this course yet.</div></td>
