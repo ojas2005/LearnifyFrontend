@@ -7,6 +7,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class FilterPendingPipe implements PipeTransform {
   transform(courses: any[]): any[] {
     if (!courses) return [];
-    return courses.filter(c => !c.isApproved && c.isPublished);
+    return courses.filter(c => !c.isApproved);
   }
 }

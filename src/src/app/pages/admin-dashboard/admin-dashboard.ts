@@ -20,6 +20,16 @@ export class AdminDashboard implements OnInit {
   selectedCourse: any = null;
   enrollments: any[] = [];
 
+  get pendingInstructors(): any[] {
+    return this.accounts.filter(acc => acc.role === 'Instructor' && !acc.isActive);
+  }
+
+  get totalRevenue(): number {
+    if (this.stats?.totalRevenue > 0) return this.stats.totalRevenue;
+    // Local calculation fallback
+    return this.courses.reduce((sum, c) => sum + (c.enrollmentCount || 0) * (c.listPrice || 0), 0);
+  }
+
   constructor(
     public api: ApiService,
     public auth: AuthService,

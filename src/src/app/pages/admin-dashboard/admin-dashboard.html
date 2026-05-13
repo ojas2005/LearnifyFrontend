@@ -18,23 +18,29 @@
     <div class="clay-card stat-card" style="animation-delay: 0.2s;" (click)="activeTab = 'pending'">
       <div class="icon">⏳</div>
       <div class="val">{{(courses | filterPending).length}}</div>
-      <div class="label">Pending Approvals</div>
+      <div class="label">Course Approvals</div>
+    </div>
+    <div class="clay-card stat-card" style="animation-delay: 0.25s;" (click)="activeTab = 'pending-instructors'">
+      <div class="icon">👨‍🏫</div>
+      <div class="val">{{pendingInstructors.length}}</div>
+      <div class="label">Pending Instructors</div>
     </div>
     <div class="clay-card stat-card" style="animation-delay: 0.3s;" (click)="activeTab = 'analytics'">
       <div class="icon">📊</div>
-      <div class="val">{{stats?.totalRevenue || 0 | currency}}</div>
-      <div class="label">Revenue</div>
+      <div class="val" style="color: #10B981;">{{totalRevenue | currency}}</div>
+      <div class="label">Total Revenue</div>
     </div>
   </div>
 
-  <div class="role-pills" style="margin-bottom: 24px; justify-content: flex-start; gap: 12px;">
-    <div class="role-pill" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">⏳ Pending</div>
-    <div class="role-pill" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">👥 Users</div>
+  <div class="role-pills" style="margin-bottom: 24px; justify-content: flex-start; gap: 12px; flex-wrap: wrap;">
+    <div class="role-pill" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">⏳ Courses</div>
+    <div class="role-pill" [class.active]="activeTab === 'pending-instructors'" (click)="activeTab = 'pending-instructors'">👨‍🏫 Instructors</div>
+    <div class="role-pill" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">👥 All Users</div>
     <div class="role-pill" [class.active]="activeTab === 'courses'" (click)="activeTab = 'courses'">📚 All Courses</div>
     <div class="role-pill" [class.active]="activeTab === 'analytics'" (click)="activeTab = 'analytics'">📊 Analytics</div>
   </div>
 
-  <!-- Pending Tab -->
+  <!-- Pending Courses Tab -->
   <div *ngIf="activeTab === 'pending'" class="clay-card" style="padding: 0; overflow: hidden; animation: slide-up 0.4s ease both;">
     <div class="table-wrap">
       <table class="clay-table">
@@ -55,6 +61,30 @@
           </tr>
           <tr *ngIf="(courses | filterPending).length === 0">
             <td colspan="4"><div class="empty-state">No courses awaiting approval.</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pending Instructors Tab -->
+  <div *ngIf="activeTab === 'pending-instructors'" class="clay-card" style="padding: 0; overflow: hidden; animation: slide-up 0.4s ease both;">
+    <div class="table-wrap">
+      <table class="clay-table">
+        <thead>
+          <tr><th>Instructor Name</th><th>Email</th><th>Applied On</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let acc of pendingInstructors">
+            <td style="font-weight: 800;">{{acc.displayName}}</td>
+            <td style="font-size: 13px;">{{acc.emailAddress}}</td>
+            <td style="font-size: 12px; opacity: 0.7;">{{acc.registeredOn | date:'shortDate'}}</td>
+            <td>
+              <button class="clay-btn sm" (click)="activateUser(acc)" style="background: #10B981;">Approve ✓</button>
+            </td>
+          </tr>
+          <tr *ngIf="pendingInstructors.length === 0">
+            <td colspan="4"><div class="empty-state">No instructor applications pending.</div></td>
           </tr>
         </tbody>
       </table>
