@@ -36,7 +36,7 @@ export class Navbar implements OnInit {
 
   get dashRoute(): string {
     if (!this.user) return '/login';
-    if (this.user.role === 'Admin') return '/admin';
+    if (this.user.role === 'Admin' || this.user.role === 'Administrator') return '/admin';
     if (this.user.role === 'Instructor') return '/instructor';
     return '/dashboard';
   }

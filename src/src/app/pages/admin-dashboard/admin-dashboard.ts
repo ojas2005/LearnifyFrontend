@@ -30,7 +30,7 @@ export class AdminDashboard implements OnInit {
 
   ngOnInit(): void {
     const user = this.auth.currentUser;
-    if (!user || user.role !== 'Admin') {
+    if (!user || (user.role !== 'Admin' && user.role !== 'Administrator')) {
       this.router.navigate(['/dashboard']);
       return;
     }

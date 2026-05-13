@@ -8,6 +8,7 @@
       <div class="user-pill" (click)="navigate(dashRoute)">
         <span class="user-name">Hey, {{user.displayName}} 👋</span>
       </div>
+      <button *ngIf="user.role === 'Admin' || user.role === 'Administrator'" class="nav-link admin-link" (click)="navigate('/admin')" style="color: #F59E0B; font-weight: 800;">Admin Panel</button>
       <button class="nav-link" (click)="navigate(dashRoute)">Dashboard</button>
       <button class="nav-link" (click)="navigate('/profile')">Profile</button>
       <button class="clay-btn sm outline" (click)="logout()">Sign Out</button>
