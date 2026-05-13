@@ -66,25 +66,30 @@
     <div class="table-wrap">
       <table class="clay-table">
         <thead>
-          <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody>
           <tr *ngFor="let acc of accounts">
             <td><div style="font-weight: 800;">{{acc.displayName}}</div></td>
             <td style="font-size: 13px;">{{acc.emailAddress}}</td>
             <td>
-              <span class="status-badge" [style.background]="acc.role === 'Admin' ? '#FEE2E2' : acc.role === 'Instructor' ? '#DBEAFE' : '#DCFCE7'"
-                    [style.color]="acc.role === 'Admin' ? '#991B1B' : acc.role === 'Instructor' ? '#1E40AF' : '#14532d'"
-                    [style.borderColor]="acc.role === 'Admin' ? '#FCA5A5' : acc.role === 'Instructor' ? '#60A5FA' : '#86EFAC'">
-                {{acc.role}}
+              <select class="select-clay" style="padding: 4px 8px; font-size: 12px; height: 32px;" (change)="updateRole(acc, $any($event.target).value)">
+                <option [selected]="acc.role === 'Learner'" value="Learner">Learner</option>
+                <option [selected]="acc.role === 'Instructor'" value="Instructor">Instructor</option>
+                <option [selected]="acc.role === 'Admin'" value="Admin">Admin</option>
+              </select>
+            </td>
+            <td>
+              <span class="status-badge" [style.background]="acc.isActive ? '#DCFCE7' : '#FEE2E2'"
+                    [style.color]="acc.isActive ? '#14532d' : '#991B1B'">
+                {{acc.isActive ? 'Active' : 'Suspended'}}
               </span>
             </td>
             <td>
-              <select class="select-clay" style="padding: 4px 8px; font-size: 12px; height: 32px;" (change)="updateRole(acc, $any($event.target).value)">
-                <option [selected]="acc.role === 'Learner'" value="0">Learner</option>
-                <option [selected]="acc.role === 'Instructor'" value="1">Instructor</option>
-                <option [selected]="acc.role === 'Admin'" value="2">Admin</option>
-              </select>
+              <div style="display: flex; gap: 8px;">
+                <button *ngIf="acc.isActive" class="clay-btn sm danger" (click)="suspendUser(acc)">Suspend</button>
+                <button *ngIf="!acc.isActive" class="clay-btn sm" (click)="activateUser(acc)" style="background: #10B981;">Activate</button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -97,7 +102,7 @@
     <div class="table-wrap">
       <table class="clay-table">
         <thead>
-          <tr><th>Title</th><th>Topic</th><th>Instructor</th><th>Status</th><th>Price</th></tr>
+          <tr><th>Title</th><th>Topic</th><th>Instructor</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody>
           <tr *ngFor="let c of courses">
@@ -106,13 +111,66 @@
             <td style="font-size: 13px;">{{c.authorName}}</td>
             <td>
               <span class="status-badge" [style.background]="c.isApproved ? '#DCFCE7' : '#FEF3C7'" [style.color]="c.isApproved ? '#14532d' : '#92400E'">
-                {{c.isApproved ? 'Live' : 'Hidden'}}
+                {{c.isApproved ? 'Live' : 'Pending'}}
               </span>
             </td>
-            <td style="font-weight: 800;">{{c.listPrice | currency}}</td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <button class="clay-btn sm" (click)="inspectCourse(c)">Inspect 🔍</button>
+                <button class="clay-btn sm danger" (click)="deleteCourse(c)">Delete</button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Inspect Course View -->
+  <div *ngIf="activeTab === 'inspect-course' && selectedCourse" style="animation: slide-up 0.4s ease both;">
+    <button class="clay-btn sm" (click)="activeTab = 'courses'" style="margin-bottom: 24px;">← Back to Courses</button>
+    
+    <div class="clay-card" style="margin-bottom: 24px;">
+      <h2 style="margin: 0 0 8px 0;">{{selectedCourse.title}}</h2>
+      <p style="opacity: 0.7; margin-bottom: 16px;">Instructor: <strong>{{selectedCourse.authorName}}</strong></p>
+      
+      <div class="dash-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+        <div class="clay-card stat-card">
+          <div class="label">Status</div>
+          <div class="val" [style.color]="selectedCourse.isApproved ? '#10B981' : '#F59E0B'">
+            {{selectedCourse.isApproved ? 'Approved' : 'Pending'}}
+          </div>
+        </div>
+        <div class="clay-card stat-card">
+          <div class="label">Price</div>
+          <div class="val">{{selectedCourse.listPrice | currency}}</div>
+        </div>
+        <div class="clay-card stat-card">
+          <div class="label">Enrolled Students</div>
+          <div class="val">{{enrollments.length}}</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="section-title" style="font-size: 18px; margin-bottom: 16px;">Enrolled Students 🎓</h3>
+    <div class="clay-card" style="padding: 0; overflow: hidden;">
+      <div class="table-wrap">
+        <table class="clay-table">
+          <thead>
+            <tr><th>Student Name</th><th>Email</th><th>Enrolled On</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of enrollments">
+              <td style="font-weight: 800;">{{e.studentName}}</td>
+              <td>{{e.studentEmail}}</td>
+              <td>{{e.enrolledOn | date:'mediumDate'}}</td>
+            </tr>
+            <tr *ngIf="enrollments.length === 0">
+              <td colspan="3"><div class="empty-state">No students enrolled in this course yet.</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

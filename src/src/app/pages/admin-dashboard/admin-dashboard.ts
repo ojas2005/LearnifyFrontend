@@ -15,7 +15,10 @@ export class AdminDashboard implements OnInit {
   courses: any[] = [];
   stats: any = null;
   loading = true;
-  activeTab = 'pending';
+  activeTab = 'users'; // Default to users view
+  selectedUser: any = null;
+  selectedCourse: any = null;
+  enrollments: any[] = [];
 
   constructor(
     public api: ApiService,
@@ -85,13 +88,57 @@ export class AdminDashboard implements OnInit {
     });
   }
 
-  updateRole(acc: any, role: number): void {
-    this.api.put(`/api/identity/api/accounts/${acc.id}/role`, { role }).subscribe({
+  updateRole(acc: any, role: string): void {
+    const roleId = role === 'Instructor' ? 1 : role === 'Admin' ? 2 : 0;
+    this.api.put(`/api/identity/api/accounts/${acc.id}/role`, { role: roleId }).subscribe({
       next: () => {
         this.toast.add(`Role updated for ${acc.displayName}.`, 'success');
         this.refresh();
       },
       error: (err) => this.toast.add(err.message, 'error')
+    });
+  }
+
+  suspendUser(acc: any): void {
+    this.api.post(`/api/identity/api/accounts/${acc.id}/suspend`).subscribe({
+      next: () => {
+        this.toast.add(`${acc.displayName} has been suspended.`, 'info');
+        this.refresh();
+      },
+      error: (err) => this.toast.add(err.message, 'error')
+    });
+  }
+
+  activateUser(acc: any): void {
+    this.api.post(`/api/identity/api/accounts/${acc.id}/reactivate`).subscribe({
+      next: () => {
+        this.toast.add(`${acc.displayName} is now active.`, 'success');
+        this.refresh();
+      },
+      error: (err) => this.toast.add(err.message, 'error')
+    });
+  }
+
+  deleteCourse(c: any): void {
+    if (!confirm(`Are you sure you want to delete "${c.title}"?`)) return;
+    this.api.delete(`/api/courses/api/courses/${c.id}`).subscribe({
+      next: () => {
+        this.toast.add(`Course "${c.title}" deleted.`, 'success');
+        this.refresh();
+      },
+      error: (err) => this.toast.add(err.message, 'error')
+    });
+  }
+
+  inspectCourse(c: any): void {
+    this.selectedCourse = c;
+    this.activeTab = 'inspect-course';
+    this.api.get<any[]>(`/api/analytics/api/analytics/course/${c.id}/enrollments`).subscribe({
+      next: (data) => {
+        this.enrollments = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Failed to fetch enrollments', err)
     });
   }
 }
