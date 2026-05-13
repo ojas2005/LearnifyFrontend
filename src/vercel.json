@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/backend/:path*",
+      "destination": "https://learnify-gateway-ojas2005-dev.apps.rm2.thpm.p1.openshiftapps.com/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
