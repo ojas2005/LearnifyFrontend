@@ -28,16 +28,12 @@ export class Register {
     this.loading = true;
     this.api.post<any>('/api/identity/api/accounts/register', {
       displayName: this.form.name,
-      email: this.form.email,
+      emailAddress: this.form.email,
       password: this.form.password,
       role: this.form.role === 'Learner' ? 0 : 1 // 0=Learner, 1=Instructor
     }).subscribe({
       next: (res) => {
-        if (this.form.role === 'Instructor') {
-          this.toast.add('Request submitted. You can sign in once admin approves.', 'success');
-        } else {
-          this.toast.add('Account created! You can now sign in.', 'success');
-        }
+        this.toast.add('Account created! You can now sign in.', 'success');
         this.router.navigate(['/login']);
       },
       error: (err) => {
